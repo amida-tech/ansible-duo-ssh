@@ -1,4 +1,8 @@
-- name: Install prerequisites
+- name: Install Python (Debian)
+  raw: sudo apt-get install python
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install prerequisites (CentOS)
   yum:
     name:
       - openssl-devel
@@ -7,6 +11,19 @@
       - autoconf
       - git
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  become: true
+
+- name: Install prerequisites (Debian)
+  apt:
+    name:
+      - libssl-dev
+      - libpam-dev
+      - libtool
+      - autoconf
+      - build-essential
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   become: true
 
 - name: Download duo
@@ -62,7 +79,7 @@
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: '^ForceCommand'
-    line: 'ForceCommand /sbin/login_duo_multi'
+    line: 'ForceCommand /usr/sbin/login_duo_multi'
   become: true
 
 - name: Disable ssh PermitTunnel
