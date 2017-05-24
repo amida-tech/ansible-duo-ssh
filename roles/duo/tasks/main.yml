@@ -1,0 +1,84 @@
+- name: Install prerequisites
+  yum:
+    name:
+      - openssl-devel
+      - pam-devel
+      - libtool
+      - autoconf
+      - git
+    state: present
+  become: true
+
+- name: Download duo
+  git:
+    dest: /tmp/duo
+    repo: https://github.com/duosecurity/duo_unix.git
+    force: yes
+    accept_hostkey: yes
+    version: master
+
+- name: Patch duo for multiuser support
+  lineinfile:
+    dest: /tmp/duo/login_duo/login_duo.c
+    regexp: 'ctx->duouser != NULL'
+    line: 'if (ctx->config != NULL) {'
+
+- name: Generate duo configure
+  command: autoreconf -i chdir=/tmp/duo
+
+- name: Configure duo source
+  command: ./configure --prefix=/usr chdir=/tmp/duo
+
+- name: Build duo
+  command: make chdir=/tmp/duo
+
+- name: Install duo
+  command: make install chdir=/tmp/duo
+  become: true
+
+- name: Clear duo source dir
+  file:
+    path: /tmp/duo
+    state: absent
+
+- name: Install duo config
+  template:
+    src: login_duo.conf.j2
+    dest: /etc/duo/login_duo.conf
+    owner: sshd
+    group: 0
+    mode: 0600
+  become: true
+
+- name: Install helper script
+  template:
+    src: login_duo_multi
+    dest: /usr/sbin/login_duo_multi
+    owner: root
+    mode: 0755
+  become: true
+
+- name: Add duo to ssh login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^ForceCommand'
+    line: 'ForceCommand /sbin/login_duo_multi'
+  become: true
+
+- name: Disable ssh PermitTunnel
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^PermitTunnel'
+    line: 'PermitTunnel no'
+  become: true
+
+- name: Disable ssh AllowTcpForwarding
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^AllowTcpForwarding'
+    line: 'AllowTcpForwarding no'
+  become: true
+
+- name: Restart ssh
+  service: name=sshd state=restarted
+  become: true

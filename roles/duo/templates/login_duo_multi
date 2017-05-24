@@ -1,0 +1,3 @@
+#!/bin/bash
+read -p "Enter Duo user to authenticate as: " user
+/usr/sbin/login_duo -f $user
