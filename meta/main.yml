@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  author: Amida Technology Solutions
+  description: Role to install and configure multi-user Duo for 2FA on SSH logins
+  company: Amida Technology Solutions
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+  - name: Debian
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  - name: CentOS
+    versions:
+    - all
+  - name: Red Hat Enterprise Linux
+    versions:
+    - all
+  categories:
+  - system
+  - security
+  - ssh
