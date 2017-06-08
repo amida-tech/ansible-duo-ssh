@@ -18,7 +18,7 @@ galaxy_info:
   - name: Red Hat Enterprise Linux
     versions:
     - all
-  categories:
+  galaxy_tags:
   - system
   - security
   - ssh
