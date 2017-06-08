@@ -14,6 +14,11 @@ should use a [different](https://github.com/jlafon/ansible-duo-security) Ansible
 Please read this README carefully to avoid creating security holes. In particular, note that you **must**
 modify the default Duo _New User Policy_.
 
+## Role Variables
+* `duo_ssh_ikey` - Duo application Integration Key (found in application dashboard)
+* `duo_ssh_skey` - Duo application Secret Key (found in application dashboard)
+* `duo_ssh_host` - Duo application host endpoint (found in application dashboard)
+
 ## Security Discussion
 By default, Duo does not allow system-wide multi-user support (setting the `setuid` bit disables shared accounts for non-root-users, setting the `setuid` bit requires each user to have their own configuration file). This is for good reason: it allows every Duo user to retrieve the duo conf file, 
 and hence fake authentication as other Duo users.
@@ -43,7 +48,7 @@ Policy_ to _Deny access to unenrolled users._.
 in the welcome email to complete the enrollment process.
 5. Install Ansible and run
 ```
-ansible-playbook --extra-vars "ikey=IKEY skey=SKEY duo_host=DUO_HOST" -u USER -i "HOST," playbook.yml
+ansible-playbook --extra-vars "duo_ssh_ikey=IKEY duo_ssh_skey=SKEY duo_ssh_host=DUO_HOST" -u USER -i "HOST," playbook.yml
 ```
 where `USER@HOST` is the server to run on, and `IKEY`, `SKEY` and `DUO_HOST` are the [vars](#Variables)
 noted in step 2.
@@ -54,7 +59,7 @@ created in step 4. Follow the on-screen instructions to complete push/SMS/voice 
 ### Standalone
 A barebones `playbook.yml` is included that can be used to run the role. Install Ansible and run
 ```
-ansible-playbook --extra-vars "ikey=IKEY skey=SKEY duo_host=DUO_HOST" -u USER -i "HOST," playbook.yml
+ansible-playbook --extra-vars "duo_ssh_ikey=IKEY duo_ssh_skey=SKEY duo_ssh_host=DUO_HOST" -u USER -i "HOST," playbook.yml
 ```
 where `USER@HOST` is the machine to run on, and `IKEY`, `SKEY` and `DUO_HOST` are the vars described in
 [Variables](#Variables).
@@ -66,7 +71,5 @@ To integrate the role into an existing ansible playbook:
 3. Add the duo [vars](#Variables) to the playbook or inventory. Alternatively, pass in the vars when
 running the `ansible-playbook` command, as demonstrated in [Standalone](#Standalone).
 
-## Variables
-* `IKEY` - Duo application Integration Key (found in application dashboard)
-* `SKEY` - Duo application Secret Key (found in application dashboard)
-* `DUO_HOST` - Duo application host endpoint (found in application dashboard)
+## License
+MIT
