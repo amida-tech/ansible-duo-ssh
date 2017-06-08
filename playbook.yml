@@ -1,0 +1,8 @@
+---
+- hosts: all
+  roles:
+    - duo
+  vars:
+    duo_ssh_ikey: "IKEY"
+    duo_ssh_skey: "SKEY"
+    duo_ssh_host: "DUO_HOST"
