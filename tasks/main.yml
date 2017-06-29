@@ -1,6 +1,6 @@
 ---
 - name: Install Python (Debian)
-  raw: sudo apt-get install python
+  raw: sudo apt-get install -y python
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install prerequisites (CentOS)
